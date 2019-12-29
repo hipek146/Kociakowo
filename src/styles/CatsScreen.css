@@ -1,0 +1,22 @@
+.catsLogout {
+  border: 2px solid black;
+  padding: 8px;
+  padding-left: 30px;
+  padding-right: 30px;
+  background-color: #ede4d1;
+  font-weight: bold;
+  font-style: italic;
+}
+.catsRasy {
+  padding: 6px;
+  color: #222;
+}
+
+.catsRasyHeader {
+  font-weight: bold;
+  padding-bottom: 3px;
+  padding-left: 4px;
+}
+.catsRasyContent {
+  text-align: justify;
+}

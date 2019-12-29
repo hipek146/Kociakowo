@@ -1,0 +1,65 @@
+.listMargin {
+  width: 100%;
+  max-width: 1000px;
+  padding: 6px;
+  box-sizing: border-box;
+}
+.listWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border: 2px solid #444;
+  box-sizing: border-box;
+  box-shadow: 0px 0px 5px -2px;
+}
+.listHeader {
+  background-color: rgba(236, 209, 135, 0.637);
+  width: 100%;
+  text-align: center;
+  padding: 4px;
+  font-weight: bold;
+  font-size: 21px;
+  color: #333;
+  border-bottom: 1px solid #666;
+  box-sizing: border-box;
+}
+
+.listRow {
+  display: flex;
+  padding: 4px;
+}
+.listRowClick:hover {
+  background-color: rgba(40, 107, 138, 0.788) !important;
+  cursor: pointer;
+  color: #eee;
+}
+.listRowActive {
+  background-color: rgba(40, 107, 138, 0.788) !important;
+  cursor: pointer;
+  color: #eee;
+  font-weight: bold;
+}
+
+.listValue {
+  flex: 1;
+  text-align: center;
+}
+
+.listRow:first-child {
+  background-color: rgba(236, 228, 182, 0.527) !important;
+  border-bottom: 1px solid #333 !important;
+  font-weight: bold !important;
+  color: #444 !important;
+}
+
+.listRow:nth-child(odd) {
+  background-color: rgba(203, 216, 218, 0.527);
+}
+.listRow:nth-child(even) {
+  background-color: rgba(226, 235, 238, 0.527);
+}
+.listContent {
+  border-bottom: 1px solid #333;
+  border-top: 1px solid #333;
+  padding: 6px;
+}
