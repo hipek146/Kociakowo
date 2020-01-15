@@ -6,16 +6,24 @@ export class Alert extends React.PureComponent {
     super();
     this.state = { text: "", color: "black", alpha: 0 };
   }
-  update = (text, color) => {
-    this.setState({ text: text, color: color, alpha: 1 }, () => {
-      setTimeout(() => {
-        var interval = setInterval(
+  update = (text, color, index = 1) => {
+    if ((this.interval || this.timeout) && this.state.index > index) return;
+    clearTimeout(this.timeout);
+    clearInterval(this.interval);
+    this.setState({ text: text, color: color, alpha: 1, index: index }, () => {
+      this.timeout = setTimeout(() => {
+        clearInterval(this.interval);
+        this.interval = setInterval(
           () =>
             this.setState({ alpha: this.state.alpha - 0.05 }, () => {
-              if (this.state.alpha <= 0) clearInterval(interval);
+              if (this.state.alpha <= 0) {
+                clearInterval(this.interval);
+                this.interval = null;
+              }
             }),
           30
         );
+        this.timeout = null;
       }, 2000);
     });
   };

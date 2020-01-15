@@ -1,6 +1,10 @@
 import { store } from "Store";
 
-export function signin(login, haslo, callback = () => {}) {
+export function signin(
+  login = store.get().login,
+  haslo = store.get().haslo,
+  callback = () => {}
+) {
   fetch(
     "http://pascal.fis.agh.edu.pl:4012/signin?login=" +
       login +
@@ -19,7 +23,7 @@ export function signin(login, haslo, callback = () => {}) {
           document.cookie = `login=${login}`;
           document.cookie = `haslo=${haslo}`;
         }
-        store.set("user", json);
+        store.set(["login", "haslo", "user"], [login, haslo, json]);
         if (json.admin) store.alert("Zalogowano jako administrator!", "green");
         else store.alert("Zalogowano pomyślnie!", "green");
       } else {

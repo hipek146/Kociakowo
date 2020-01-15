@@ -2,10 +2,11 @@ import React from "react";
 import "styles/ExhibitionsScreen.css";
 import { Form } from "components/Form";
 import { List } from "components/List";
+import { Ticket } from "components/Ticket";
 import { store } from "Store";
 import { auth } from "auth";
 
-export class ExhibitionsScreen extends React.PureComponent {
+export class ExhibitionsScreen extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -22,16 +23,151 @@ export class ExhibitionsScreen extends React.PureComponent {
     store.unsubscribe(this);
   }
 
+  componentDidUpdate() {
+    if (!this.stopUpdate) {
+      this.updateExhibitions();
+      this.stopUpdate = true;
+    } else {
+      this.stopUpdate = false;
+    }
+  }
+
   updateExhibitions = () => {
-    fetch("http://pascal.fis.agh.edu.pl:4012/exhibitions")
+    fetch(
+      "http://pascal.fis.agh.edu.pl:4012/exhibitions" +
+        (store.get().user && store.get().user.admin ? "?" + auth() : "")
+    )
       .then(res => res.json())
       .then(json => {
         this.setState({ exhibitionsList: json });
       });
   };
 
+  async editSpecialInfo(id) {
+    var result;
+    var res = await fetch(
+      "http://pascal.fis.agh.edu.pl:4012/exhibitionDetails?id=" + id
+    );
+    var json = await res.json();
+    result = json[0].Opis;
+
+    return result;
+  }
+
   async exhibitionDetails(id) {
-    store.alert("Wczytywanie", "black");
+    store.alert("Wczytywanie", "black", 0);
+
+    const addReward = async function(id) {
+      var toReturn = {};
+      var result = {};
+
+      await fetch("http://pascal.fis.agh.edu.pl:4012/rewards?id=" + id)
+        .then(res => res.json())
+        .then(json => {
+          result.rewards = json;
+        });
+
+      await fetch("http://pascal.fis.agh.edu.pl:4012/users?" + auth())
+        .then(res => res.json())
+        .then(json => {
+          result.users = json;
+        });
+
+      const formsReward = {
+        Miejsce: { name: "miejsce", type: "number" },
+        Opis: { name: "opis", type: "textarea" }
+      };
+
+      var comboRewards = result.rewards.filter((element, index, array) => {
+        let res = true;
+        array.forEach((el, i) => {
+          if (el.Miejsce === element.Miejsce && i < index) res = false;
+        });
+        return res;
+      });
+
+      comboRewards = comboRewards.map(el => {
+        return {
+          name: el.Miejsce + ". " + el.Opis,
+          value: comboRewards.filter(
+            element => element.Miejsce === el.Miejsce
+          )[0].id
+        };
+      });
+
+      const formsWinner = {
+        Właściciel: {
+          name: "wlasciciel",
+          type: "combobox",
+          combobox: result.users.map(el => {
+            return {
+              name: el.wlasciciel_id + ": " + el.imie + " " + el.nazwisko,
+              value: el.wlasciciel_id
+            };
+          }),
+          callback: {
+            api: "http://pascal.fis.agh.edu.pl:4012/cats?id=",
+            name: "Kot",
+            value: "kot"
+          }
+        },
+        Kot: { name: "kot", type: "combobox", combobox: [] },
+        Miejsce: {
+          name: "id",
+          type: "combobox",
+          combobox: comboRewards
+        }
+      };
+
+      toReturn = (
+        <div className="flexCenter">
+          {store.get().user && store.get().user.admin && (
+            <>
+              <Form
+                info={formsReward}
+                api="http://pascal.fis.agh.edu.pl:4012/add/reward"
+                auth={"id=" + id + "&" + auth()}
+                button="Dodaj nagrodę"
+              />
+              <Form
+                info={{
+                  Miejsce: {
+                    name: "id",
+                    type: "combobox",
+                    combobox: comboRewards
+                  }
+                }}
+                api="http://pascal.fis.agh.edu.pl:4012/delete/reward"
+                auth={auth()}
+                button="Usuń nagrodę"
+              />
+            </>
+          )}
+          <List
+            title="Nagrody"
+            info={result.rewards}
+            exception={["id", "zwyciezca_id", "Konkurs"]}
+            deleteApi={
+              store.get().user &&
+              store.get().user.admin &&
+              "http://pascal.fis.agh.edu.pl:4012/delete/winner?" + auth()
+            }
+            deleteBy={"zwyciezca_id"}
+          />
+          {store.get().user && store.get().user.admin && (
+            <Form
+              info={formsWinner}
+              api="http://pascal.fis.agh.edu.pl:4012/add/winner"
+              auth={auth()}
+              button="Dodaj Zwycięzcę"
+            />
+          )}
+        </div>
+      );
+
+      this.setState({ content: toReturn });
+    };
+
     var toReturn = {};
     var result = {};
     await fetch("http://pascal.fis.agh.edu.pl:4012/exhibitionDetails?id=" + id)
@@ -54,6 +190,14 @@ export class ExhibitionsScreen extends React.PureComponent {
       .then(json => {
         result.tickets = json;
       });
+    if (store.get().user)
+      await fetch(
+        "http://pascal.fis.agh.edu.pl:4012/myTickets?id=" + id + "&" + auth()
+      )
+        .then(res => res.json())
+        .then(json => {
+          result.myTickets = json;
+        });
     if (store.get().user && store.get().user.admin)
       await fetch("http://pascal.fis.agh.edu.pl:4012/tickets")
         .then(res => res.json())
@@ -72,7 +216,7 @@ export class ExhibitionsScreen extends React.PureComponent {
       Nazwa: { name: "nazwa" },
       Opis: { name: "opis", type: "textarea" },
       Wydarzenie: {
-        name: "id",
+        name: "wydarzenie_id",
         type: "combobox",
         combobox: result.events.map(el => {
           return { name: el.Nazwa, value: el.id };
@@ -86,7 +230,7 @@ export class ExhibitionsScreen extends React.PureComponent {
           name: "typ_biletu_id",
           type: "combobox",
           combobox: result.ticketTypes.map(el => {
-            return { name: el.nazwa, value: el.typ_biletu_id };
+            return { name: el.Nazwa, value: el.id };
           })
         }
       };
@@ -121,6 +265,10 @@ export class ExhibitionsScreen extends React.PureComponent {
             }
             this.setState({ content: content });
           }}
+          edit={formsEvent}
+          editApi={"http://pascal.fis.agh.edu.pl:4012/update/event"}
+          editAuth={auth()}
+          deleteApi={"http://pascal.fis.agh.edu.pl:4012/delete/event?" + auth()}
         />
         {store.get().user && store.get().user.admin && (
           <div className="flexCenter">
@@ -132,7 +280,17 @@ export class ExhibitionsScreen extends React.PureComponent {
             />
           </div>
         )}
-        <List title="Konkursy" info={result.competitions} />
+        <List
+          title="Konkursy"
+          info={result.competitions}
+          content={addReward}
+          edit={formsCompetition}
+          editApi={"http://pascal.fis.agh.edu.pl:4012/update/competition"}
+          editAuth={auth()}
+          deleteApi={
+            "http://pascal.fis.agh.edu.pl:4012/delete/competition?" + auth()
+          }
+        />
         {store.get().user && store.get().user.admin && (
           <div className="flexCenter">
             <Form
@@ -146,21 +304,28 @@ export class ExhibitionsScreen extends React.PureComponent {
         <br />
         <div className="exhibitionHeader">Bilety</div>
         {result.tickets.map((element, index) => (
-          <div key={"exhibitionTicket_" + index} className="exhibitionTicket">
-            <div className="exhibitionTicketLeft">
-              <div className="exhibitionTicketHeader">{element.Nazwa}</div>
-              <div className="exhibitionTicketPrice">
-                Cena: {element.Cena} PLN
-                <div className="exhibitionTicketDescription">
-                  {element.Opis}
-                </div>
-              </div>
-            </div>
-            <div>
-              Kup bilet{" "}
-              <input type="number" min="1" max="100" step="1" placeholder="1" />
-            </div>
-          </div>
+          <Ticket
+            key={"ticket_" + index}
+            Nazwa={element.Nazwa}
+            Cena={element.Cena}
+            Opis={element.Opis}
+            api={
+              "http://pascal.fis.agh.edu.pl:4012/buy/ticket?id=" +
+              element.id +
+              "&" +
+              auth()
+            }
+            deleteApi={
+              "http://pascal.fis.agh.edu.pl:4012/delete/ticketCompetition?id=" +
+              element.id +
+              "&" +
+              auth()
+            }
+            Posiadane={
+              result.myTickets &&
+              result.myTickets.filter(el => el.bilet_id === element.id).length
+            }
+          />
         ))}
       </div>
     );
@@ -180,6 +345,18 @@ export class ExhibitionsScreen extends React.PureComponent {
       Opis: { name: "opis", type: "textarea" }
     };
     const user = store.get().user;
+    var editForms;
+    if (user && user.admin) {
+      editForms = {
+        Nazwa: { name: "nazwa" },
+        Miasto: { name: "miasto" },
+        Adres: { name: "adres" },
+        Rozpoczęcie: { name: "data_rozpoczecia", type: "datetime" },
+        Zakończenie: { name: "data_zakonczenia", type: "datetime" },
+        Koszt: { name: "koszt" },
+        Opis: { name: "opis", type: "textarea" }
+      };
+    }
     return (
       <div className="flexCenter">
         {user && user.admin && (
@@ -196,6 +373,15 @@ export class ExhibitionsScreen extends React.PureComponent {
           title="Wystawy"
           info={this.state.exhibitionsList}
           content={this.exhibitionDetails}
+          edit={editForms}
+          editApi={"http://pascal.fis.agh.edu.pl:4012/update/exhibition"}
+          editAuth={auth()}
+          editSpecialInfo={{ Opis: this.editSpecialInfo }}
+          deleteApi={
+            user &&
+            user.admin &&
+            "http://pascal.fis.agh.edu.pl:4012/delete/exhibition?" + auth()
+          }
         />
       </div>
     );

@@ -24,6 +24,9 @@
   resize: none;
   box-sizing: border-box;
 }
+.form textarea {
+  height: 100px;
+}
 .formDatatime {
   width: 196px;
   display: flex;
@@ -34,7 +37,7 @@
   margin-right: 5px;
 }
 .formDatatime > input {
-  width: 66px;
+  width: 72px;
 }
 
 .formButton {

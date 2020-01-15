@@ -14,24 +14,3 @@
   padding: 5px;
   margin-left: 18px;
 }
-.exhibitionTicket {
-  display: flex;
-  margin: 8px;
-  align-items: center;
-  justify-content: space-between;
-}
-.exhibitionTicketHeader {
-  font-weight: bold;
-  font-size: 18px;
-  font-style: italic;
-  margin: 3px;
-  margin-left: 9px;
-}
-.exhibitionTicketPrice {
-  font-size: 16px;
-}
-.exhibitionTicketDescription {
-  font-size: 14px;
-  font-style: italic;
-  padding: 2px;
-}

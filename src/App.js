@@ -6,7 +6,10 @@ import { HomeScreen } from "screens/HomeScreen";
 import { SignupScreen } from "screens/SignupScreen";
 import { CatsScreen } from "screens/CatsScreen";
 import { ExhibitionsScreen } from "screens/ExhibitionsScreen";
+import { DisposalScreen } from "screens/DisposalScreen";
+import { OwnersScreen } from "screens/OwnersScreen";
 import { TicketsScreen } from "screens/TicketsScreen";
+import { AccountScreen } from "screens/AccountScreen";
 import { signin } from "actions";
 import { store } from "Store";
 
@@ -40,10 +43,14 @@ class App extends React.PureComponent {
     };
     const cookies = document.cookie.split(/; */);
 
+    var storeNames = [];
+    var storeValues = [];
     cookies.forEach(el => {
       const values = el.split("=");
-      store.set(values[0], values[1]);
+      storeNames.push(values[0]);
+      storeValues.push(values[1]);
     });
+    store.set(storeNames, storeValues);
     if (store.get().login && store.get().haslo) {
       signin(store.get().login, store.get().haslo, () =>
         this.setState({ loading: false })
@@ -94,12 +101,37 @@ class App extends React.PureComponent {
         }
         document.title = "Wystawy";
         break;
+      case "sprzedaz":
+        Navigation = DisposalScreen;
+        if (store.get().push) {
+          window.history.pushState("Sprzedaż", "Bazy Danych", "/sprzedaz");
+        }
+        document.title = "Sprzedaż";
+        break;
+      case "wlasciciele":
+        Navigation = OwnersScreen;
+        if (store.get().push) {
+          window.history.pushState(
+            "Właściciele",
+            "Bazy Danych",
+            "/wlasciciele"
+          );
+        }
+        document.title = "Właściciele";
+        break;
       case "bilety":
         Navigation = TicketsScreen;
         if (store.get().push) {
           window.history.pushState("Bilety", "Bazy Danych", "/bilety");
         }
         document.title = "Bilety";
+        break;
+      case "konto":
+        Navigation = AccountScreen;
+        if (store.get().push) {
+          window.history.pushState("Konto", "Bazy Danych", "/konto");
+        }
+        document.title = "Konto";
         break;
       default:
         if (store.get().push) {

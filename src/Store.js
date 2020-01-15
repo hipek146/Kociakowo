@@ -13,11 +13,18 @@ class Store {
   subscribeAlert = target => {
     this.store.updateAlert = target;
   };
-  alert = (text, color) => {
-    if (this.store.updateAlert) this.store.updateAlert.update(text, color);
+  alert = (text, color, index = 1) => {
+    if (this.store.updateAlert)
+      this.store.updateAlert.update(text, color, index);
   };
   set = (param, value) => {
-    this.store[param] = value;
+    if (!Array.isArray(param)) {
+      param = Array.of(param);
+      value = Array.of(value);
+    }
+    param.forEach((element, index) => {
+      this.store[element] = value[index];
+    });
     this.update();
   };
   update = () => {

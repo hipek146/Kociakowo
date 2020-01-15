@@ -44,6 +44,40 @@
   flex: 1;
   text-align: center;
 }
+.listHeaderOption {
+  width: 50px;
+  text-align: center;
+  margin-left: 5px;
+}
+.listOption {
+  width: 50px;
+  margin-left: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: #eee;
+  color: red;
+  box-sizing: border-box;
+  height: 18px;
+  font-size: 14px;
+  border: 2px solid #333;
+  border-radius: 4px;
+  font-weight: bold;
+  overflow: hidden;
+}
+.listEdit {
+  color: rgb(20, 39, 102) !important;
+}
+.listOption:hover {
+  background-color: rgb(61, 58, 50);
+  border: 1px solid #333;
+  font-size: 22px;
+  cursor: pointer;
+}
+.listEdit:hover {
+  color: rgb(142, 196, 240) !important;
+}
 
 .listRow:first-child {
   background-color: rgba(236, 228, 182, 0.527) !important;

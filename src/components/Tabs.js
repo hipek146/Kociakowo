@@ -4,15 +4,15 @@ import "styles/Tabs.css";
 export class Tabs extends React.PureComponent {
   constructor() {
     super();
-    this.state = { content: undefined };
+    this.state = { content: undefined, active: 0 };
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps !== this.props)
+    if (prevProps !== this.props) {
       this.setState({
-        content: Object.values(this.props.info)[0],
-        active: Object.keys(this.props.info)[0]
+        content: Object.values(this.props.info)[this.state.active]
       });
+    }
   }
 
   render() {
@@ -20,13 +20,19 @@ export class Tabs extends React.PureComponent {
     return (
       <>
         <div className="tabs">
-          {Object.keys(info).map(key => (
+          {Object.keys(info).map((key, index) => (
             <div
+              key={"tab_" + index}
               className={
                 "tabsButton" +
-                (key === this.state.active ? " tabsButtonActive" : "")
+                (index === this.state.active ? " tabsButtonActive" : "")
               }
-              onClick={() => this.setState({ content: info[key], active: key })}
+              onClick={() =>
+                this.setState(
+                  { content: info[key], active: index },
+                  this.props.callback
+                )
+              }
             >
               {key}
             </div>

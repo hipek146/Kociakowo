@@ -43,9 +43,12 @@ export class Header extends React.PureComponent {
 
     var accountInfo = user ? (
       <>
-        <span className="headerAccount">
+        <span className="headerAccount" onClick={() => store.navigate("konto")}>
           {user.imie} {user.nazwisko}
-          <span className="headerWallet">{user.portfel} PLN</span>
+          <span className="headerWallet">
+            {String(user.portfel).replace(/(?!^)(?=(?:\d{3})+(?:\.|$))/gm, " ")}{" "}
+            PLN
+          </span>
         </span>
         <span
           className="headerAccount"
