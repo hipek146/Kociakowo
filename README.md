@@ -4,7 +4,7 @@ Autor: Piotr Litwin
 
 ## Adres
 
-http://pascal.fis.agh.edu.pl/~7litwin/frontend/
+http://pascal.fis.agh.edu.pl/~7litwin/BD/frontend/
 
 ## Informacje
 
