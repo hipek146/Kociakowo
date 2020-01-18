@@ -57,7 +57,9 @@ export class Header extends React.PureComponent {
             date.setTime(date.getMonth() - 1);
             document.cookie = `login=; expires=${date.toGMTString()}`;
             document.cookie = `haslo=; expires=${date.toGMTString()}`;
-            delete store.set("user", undefined);
+            store.set("user", undefined);
+            store.set("login", undefined);
+            store.set("haslo", undefined);
             store.alert("Wylogowano", "black");
           }}
         >

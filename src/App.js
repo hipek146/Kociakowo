@@ -10,10 +10,11 @@ import { DisposalScreen } from "screens/DisposalScreen";
 import { OwnersScreen } from "screens/OwnersScreen";
 import { TicketsScreen } from "screens/TicketsScreen";
 import { AccountScreen } from "screens/AccountScreen";
+import { ErrorScreen } from "screens/ErrorScreen";
 import { signin } from "actions";
 import { store } from "Store";
 
-const relativePath = "/";
+const relativePath = "/~7litwin/BD/frontend";
 
 class App extends React.PureComponent {
   constructor() {
@@ -23,7 +24,11 @@ class App extends React.PureComponent {
 
   componentDidMount() {
     store.subscribe(this);
-    if (window.location.pathname === "/") {
+
+    if (
+      window.location.pathname === relativePath ||
+      window.location.pathname === relativePath + "/"
+    ) {
       store.navigate("/", false);
     } else if (window.location.pathname) {
       store.navigate(
@@ -32,7 +37,10 @@ class App extends React.PureComponent {
       );
     }
     window.onpopstate = () => {
-      if (window.location.pathname === "/") {
+      if (
+        window.location.pathname === relativePath ||
+        window.location.pathname === relativePath + "/"
+      ) {
         store.navigate("/", false);
       } else if (window.location.pathname) {
         store.navigate(
@@ -68,68 +76,73 @@ class App extends React.PureComponent {
     }
     var Navigation;
 
-    switch (store.get().target.replace(relativePath, "/")) {
-      case "/":
+    switch (
+      store
+        .get()
+        .target.replace(relativePath.slice(1), "")
+        .replace("/", "")
+    ) {
+      case "":
         Navigation = HomeScreen;
         if (store.get().push) {
-          window.history.pushState("Strona główna", "Bazy Danych", "/");
+          window.history.pushState(
+            "Strona główna",
+            "Bazy Danych",
+            relativePath + "/"
+          );
         }
         document.title = "Strona główna";
         break;
       case "rejestracja":
         Navigation = SignupScreen;
         if (store.get().push) {
-          window.history.pushState(
-            "Rejestracja",
-            "Bazy Danych",
-            "/rejestracja"
-          );
+          window.history.pushState("Rejestracja", "Bazy Danych", "rejestracja");
         }
         document.title = "Rejestracja";
         break;
       case "koty":
         Navigation = CatsScreen;
         if (store.get().push) {
-          window.history.pushState("Koty", "Bazy Danych", "/koty");
+          window.history.pushState("Koty", "Bazy Danych", "koty");
         }
         document.title = "Koty";
         break;
       case "wystawy":
         Navigation = ExhibitionsScreen;
         if (store.get().push) {
-          window.history.pushState("Wystawy", "Bazy Danych", "/wystawy");
+          window.history.pushState(
+            "Wystawy",
+            "Bazy Danych",
+            relativePath + "/wystawy"
+          );
         }
         document.title = "Wystawy";
         break;
       case "sprzedaz":
         Navigation = DisposalScreen;
         if (store.get().push) {
-          window.history.pushState("Sprzedaż", "Bazy Danych", "/sprzedaz");
+          window.history.pushState("Sprzedaż", "Bazy Danych", "sprzedaz");
         }
         document.title = "Sprzedaż";
         break;
       case "wlasciciele":
         Navigation = OwnersScreen;
         if (store.get().push) {
-          window.history.pushState(
-            "Właściciele",
-            "Bazy Danych",
-            "/wlasciciele"
-          );
+          window.history.pushState("Właściciele", "Bazy Danych", "wlasciciele");
         }
         document.title = "Właściciele";
         break;
       case "bilety":
         Navigation = TicketsScreen;
         if (store.get().push) {
-          window.history.pushState("Bilety", "Bazy Danych", "/bilety");
+          window.history.pushState("Bilety", "Bazy Danych", "bilety");
         }
         document.title = "Bilety";
         break;
       case "konto":
         Navigation = AccountScreen;
         if (store.get().push) {
-          window.history.pushState("Konto", "Bazy Danych", "/konto");
+          window.history.pushState("Konto", "Bazy Danych", "konto");
         }
         document.title = "Konto";
         break;
@@ -142,8 +155,7 @@ class App extends React.PureComponent {
           );
         }
         document.title = "Error 404";
-        console.log(store.get().target.replace(relativePath, "/"));
-        throw new Error(404);
+        Navigation = ErrorScreen;
     }
     return (
       <div className="App">

@@ -95,29 +95,30 @@ export class ExhibitionsScreen extends React.Component {
         };
       });
 
-      const formsWinner = {
-        Właściciel: {
-          name: "wlasciciel",
-          type: "combobox",
-          combobox: result.users.map(el => {
-            return {
-              name: el.wlasciciel_id + ": " + el.imie + " " + el.nazwisko,
-              value: el.wlasciciel_id
-            };
-          }),
-          callback: {
-            api: "http://pascal.fis.agh.edu.pl:4012/cats?id=",
-            name: "Kot",
-            value: "kot"
+      const formsWinner = store.get().user &&
+        store.get().user.admin && {
+          Właściciel: {
+            name: "wlasciciel",
+            type: "combobox",
+            combobox: result.users.map(el => {
+              return {
+                name: el.wlasciciel_id + ": " + el.imie + " " + el.nazwisko,
+                value: el.wlasciciel_id
+              };
+            }),
+            callback: {
+              api: "http://pascal.fis.agh.edu.pl:4012/cats?id=",
+              name: "Kot",
+              value: "kot"
+            }
+          },
+          Kot: { name: "kot", type: "combobox", combobox: [] },
+          Miejsce: {
+            name: "id",
+            type: "combobox",
+            combobox: comboRewards
           }
-        },
-        Kot: { name: "kot", type: "combobox", combobox: [] },
-        Miejsce: {
-          name: "id",
-          type: "combobox",
-          combobox: comboRewards
-        }
-      };
+        };
 
       toReturn = (
         <div className="flexCenter">
@@ -205,24 +206,26 @@ export class ExhibitionsScreen extends React.Component {
           result.ticketTypes = json;
         });
 
-    const formsEvent = {
-      Nazwa: { name: "nazwa" },
-      Miejsce: { name: "miejsce" },
-      "Data rozpoczęcia": { name: "data_rozpoczecia", type: "datetime" },
-      "Data zakończenia": { name: "data_zakonczenia", type: "datetime" },
-      Opis: { name: "opis", type: "textarea" }
-    };
-    const formsCompetition = {
-      Nazwa: { name: "nazwa" },
-      Opis: { name: "opis", type: "textarea" },
-      Wydarzenie: {
-        name: "wydarzenie_id",
-        type: "combobox",
-        combobox: result.events.map(el => {
-          return { name: el.Nazwa, value: el.id };
-        })
-      }
-    };
+    const formsEvent = store.get().user &&
+      store.get().user.admin && {
+        Nazwa: { name: "nazwa" },
+        Miejsce: { name: "miejsce" },
+        "Data rozpoczęcia": { name: "data_rozpoczecia", type: "datetime" },
+        "Data zakończenia": { name: "data_zakonczenia", type: "datetime" },
+        Opis: { name: "opis", type: "textarea" }
+      };
+    const formsCompetition = store.get().user &&
+      store.get().user.admin && {
+        Nazwa: { name: "nazwa" },
+        Opis: { name: "opis", type: "textarea" },
+        Wydarzenie: {
+          name: "wydarzenie_id",
+          type: "combobox",
+          combobox: result.events.map(el => {
+            return { name: el.Nazwa, value: el.id };
+          })
+        }
+      };
     const formsTickets = store.get().user &&
       store.get().user.admin && {
         Cena: { name: "cena" },
@@ -268,7 +271,11 @@ export class ExhibitionsScreen extends React.Component {
           edit={formsEvent}
           editApi={"http://pascal.fis.agh.edu.pl:4012/update/event"}
           editAuth={auth()}
-          deleteApi={"http://pascal.fis.agh.edu.pl:4012/delete/event?" + auth()}
+          deleteApi={
+            store.get().user &&
+            store.get().user.admin &&
+            "http://pascal.fis.agh.edu.pl:4012/delete/event?" + auth()
+          }
         />
         {store.get().user && store.get().user.admin && (
           <div className="flexCenter">
@@ -288,6 +295,8 @@ export class ExhibitionsScreen extends React.Component {
           editApi={"http://pascal.fis.agh.edu.pl:4012/update/competition"}
           editAuth={auth()}
           deleteApi={
+            store.get().user &&
+            store.get().user.admin &&
             "http://pascal.fis.agh.edu.pl:4012/delete/competition?" + auth()
           }
         />

@@ -147,7 +147,7 @@ export class DisposalScreen extends React.Component {
           events = json;
         });
       await fetch(
-        "http://pascal.fis.agh.edu.pl:4012/cats?" + store.get().user.id
+        "http://pascal.fis.agh.edu.pl:4012/cats?id=" + store.get().user.id
       )
         .then(res => res.json())
         .then(json => {

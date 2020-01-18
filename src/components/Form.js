@@ -40,6 +40,7 @@ export class Form extends React.PureComponent {
   setTime(value) {
     value = new Date(value);
     return (
+      (value.getHours() < 10 ? "0" : "") +
       value.getHours() +
       ":" +
       (value.getMinutes() < 10 ? "0" : "") +
@@ -179,7 +180,7 @@ export class Form extends React.PureComponent {
                     );
                   }
                 } else if (json.status === "error") {
-                  store.alert(json.text, "red");
+                  store.alert(json.text, "red", 4);
                 }
                 callback && callback(json);
                 store.update();
