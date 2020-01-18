@@ -10,7 +10,7 @@ export class HomeScreen extends React.Component {
           <b>Piotr Litwin</b> 2020
         </span>
         <span>
-          <a href={process.env.PUBLIC_URL + "/dokumentacja.pdf"}>
+          <a href={process.env.PUBLIC_URL + "/Dokumentacja.pdf"}>
             Dokumentacja
           </a>{" "}
           Załączniki:{" "}
@@ -26,7 +26,7 @@ export class HomeScreen extends React.Component {
         >
           <p>
             Nie można wczytać PDF{" "}
-            <a href={process.env.PUBLIC_URL + "/dokumentacja.pdf"}>
+            <a href={process.env.PUBLIC_URL + "/Dokumentacja.pdf"}>
               link do PDF!
             </a>
           </p>
