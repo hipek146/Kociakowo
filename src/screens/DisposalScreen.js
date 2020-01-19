@@ -177,6 +177,13 @@ export class DisposalScreen extends React.Component {
       .then(json => {
         result.offers = json;
       });
+    if (store.get().user) {
+      await fetch("http://pascal.fis.agh.edu.pl:4012/offers?" + auth())
+        .then(res => res.json())
+        .then(json => {
+          result.myOffers = json;
+        });
+    }
     const formsLicenses = {
       Nazwa: { name: "nazwa" },
       Opis: { name: "opis", type: "textarea" },
@@ -244,9 +251,9 @@ export class DisposalScreen extends React.Component {
             />
             <List
               title="Moje oferty"
-              info={result.offers}
+              info={result.myOffers}
               exception={["id", "wlasciciel_id", "typ", "Opis"]}
-              content={this.offerContent(result.offers, false)}
+              content={this.offerContent(result.myOffers, false)}
               deleteApi={
                 "http://pascal.fis.agh.edu.pl:4012/delete/offer?" + auth()
               }
